@@ -1,0 +1,9 @@
+kind: Endpoints
+apiVersion: v1
+metadata:
+  name: my-svc
+subsets:
+- addresses:
+  - ip: 1.1.13.6
+  ports:
+  - port: 30008
