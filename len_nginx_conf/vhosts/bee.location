@@ -1,0 +1,493 @@
+#charset utf-8;
+
+    #access_log  logs/bee.access.log  main;
+    add_header Access-Control-Allow-Origin  *;
+    add_header "X-UA-Compatible" "IE=Edge,chrome=1";
+    add_header X-HIT    $hostname;
+    #proxy_request_buffering off;
+
+    ssi off;
+    ssi_types *;
+limit_req zone=lreq burst=3000;
+
+location =/v2/ping {
+	access_log off;
+	rewrite /v2/(.*)   /$1 break;
+        proxy_redirect     off;
+        proxy_set_header   Host             $host;
+        proxy_set_header   X-Real-IP        $http_x_forwarded_for;
+        proxy_set_header   X-Forwarded-For  $proxy_add_x_forwarded_for;
+        proxy_set_header   X-Original-URI   $request_uri;
+
+        proxy_connect_timeout      120;
+        proxy_send_timeout         120;
+        proxy_read_timeout         120;
+        client_max_body_size 2048M;
+
+        proxy_pass http://127.0.0.1:8080;
+}
+
+location  ^~ /v2/account/activate/ {
+	access_log off;
+	rewrite /v2/(.*)   /$1 break;
+        proxy_redirect     off;
+        proxy_set_header   Host             $host;
+        proxy_set_header   X-Real-IP        $http_x_forwarded_for;
+        proxy_set_header   X-Forwarded-For  $proxy_add_x_forwarded_for;
+        proxy_set_header   X-Original-URI   $request_uri;
+
+        proxy_connect_timeout      120;
+        proxy_send_timeout         120;
+        proxy_read_timeout         120;
+        client_max_body_size 2048M;
+
+        proxy_pass http://127.0.0.1:7777;
+}
+
+#location  ^~ /v2/delivery/inject {
+#	access_log off;
+#	rewrite /v2/(.*)   /$1 break;
+#        proxy_redirect     off;
+#        proxy_set_header   Host             $host;
+#        proxy_set_header   X-Real-IP        $http_x_forwarded_for;
+#        proxy_set_header   X-Forwarded-For  $proxy_add_x_forwarded_for;
+#        proxy_set_header   X-Original-URI   $request_uri;
+#
+#        proxy_connect_timeout      120;
+#        proxy_send_timeout         120;
+#        proxy_read_timeout         120;
+#        client_max_body_size 2048M;
+#
+#        proxy_pass http://127.0.0.1:7777;
+#}
+
+#location  ^~ /v2/metadata {
+#	access_log off;
+#	rewrite /v2/(.*)   /$1 break;
+#        proxy_redirect     off;
+#        proxy_set_header   Host             $host;
+#        proxy_set_header   X-Real-IP        $http_x_forwarded_for;
+#        proxy_set_header   X-Forwarded-For  $proxy_add_x_forwarded_for;
+#        proxy_set_header   X-Original-URI   $request_uri;
+#
+#        proxy_connect_timeout      120;
+#        proxy_send_timeout         120;
+#        proxy_read_timeout         120;
+#        client_max_body_size 2048M;
+#
+#        proxy_pass http://127.0.0.1:7777;
+#}
+
+
+
+   location /l/ {
+        rewrite /l/(.*)   /$1 break;
+        proxy_redirect     off;
+        proxy_set_header   Host             $host;
+        proxy_set_header   X-Real-IP        $http_x_forwarded_for;
+        proxy_set_header   X-Forwarded-For  $proxy_add_x_forwarded_for;
+        proxy_set_header   X-Original-URI   $request_uri;
+
+        proxy_pass http://127.0.0.1:8888;
+    }
+
+    location ^~ /user/batch_create {
+        proxy_redirect     off;
+        proxy_set_header   Host             $host;
+        proxy_set_header   X-Real-IP        $http_x_forwarded_for;
+        proxy_set_header   X-Forwarded-For  $proxy_add_x_forwarded_for;
+        proxy_set_header   X-Original-URI   $request_uri;
+
+        proxy_connect_timeout      120;
+        proxy_send_timeout         120;
+        proxy_read_timeout         120;
+        client_max_body_size 2048M;
+
+        proxy_pass http://127.0.0.1:8080;
+    }
+
+    location ~ /v2/user/batch_create {
+        client_max_body_size 2048M;
+        content_by_lua_file "/opt/webapps/pangu/server/php/server_config/user_batch_create.lua";
+    }
+
+   location ^~ /v2/files {
+        rewrite /v2/files(.*)   /files$1 break;
+        proxy_redirect     off;
+        proxy_set_header   Host             $host;
+        proxy_set_header   X-Real-IP        $http_x_forwarded_for;
+        proxy_set_header   X-Forwarded-For  $proxy_add_x_forwarded_for;
+        proxy_set_header   X-Original-URI   $request_uri;
+        proxy_set_header   X-Content-Length  $content_length;
+
+        proxy_connect_timeout      120;
+        proxy_send_timeout         120;
+        proxy_read_timeout         120;
+        client_max_body_size 2048M;
+
+	proxy_request_buffering off;
+        #limit_conn one 10;
+        #limit_rate 10k;
+
+        proxy_pass http://127.0.0.1:7105;
+    } 
+
+    location ^~ /v2/commit_chunked_upload{
+        rewrite /v2/(.*)   /$1 break;
+        proxy_redirect     off;
+        proxy_set_header   Host             $host;
+        proxy_set_header   X-Real-IP        $http_x_forwarded_for;
+        proxy_set_header   X-Forwarded-For  $proxy_add_x_forwarded_for;
+        proxy_set_header   X-Original-URI   $request_uri;
+
+        proxy_connect_timeout      120;
+        proxy_send_timeout         120;
+        proxy_read_timeout         120;
+        client_max_body_size 2048M;
+
+        proxy_pass http://127.0.0.1:7105;
+    }
+    location ^~ /v2/chunked_upload {
+        rewrite /v2/(.*)   /$1 break;
+        proxy_redirect     off;
+        proxy_set_header   Host             $host;
+        proxy_set_header   X-Real-IP        $http_x_forwarded_for;
+        proxy_set_header   X-Forwarded-For  $proxy_add_x_forwarded_for;
+        proxy_set_header   X-Original-URI   $request_uri;
+
+        proxy_connect_timeout      120;
+        proxy_send_timeout         120;
+        proxy_read_timeout         120;
+        client_max_body_size 2048M;
+
+        proxy_pass http://127.0.0.1:7105;
+    }
+
+    location ^~ /v2/wopi/ {
+        rewrite /v2/(.*)   /$1 break;
+        root /var/preview_files;
+        proxy_redirect     off;
+        proxy_set_header   Host             $host;
+        proxy_set_header   X-Real-IP        $http_x_forwarded_for;
+        proxy_set_header   X-Forwarded-For  $proxy_add_x_forwarded_for;
+        proxy_set_header   X-Original-URI   $request_uri;
+
+        proxy_connect_timeout      120;
+        proxy_send_timeout         120;
+        proxy_read_timeout         120;
+        client_max_body_size 2048M;
+
+        proxy_pass http://127.0.0.1:7105;
+    }
+#---------------------old outlook plugin interface--------------------------------
+    location ^~ /v1/files {
+        rewrite /v1/files(.*)   /files$1 break;
+        proxy_redirect     off;
+        proxy_set_header   Host             $host;
+        proxy_set_header   X-Real-IP        $http_x_forwarded_for;
+        proxy_set_header   X-Forwarded-For  $proxy_add_x_forwarded_for;
+        proxy_set_header   X-Original-URI   $request_uri;
+        proxy_set_header   X-Content-Length  $content_length;
+
+        proxy_connect_timeout      120;
+        proxy_send_timeout         120;
+        proxy_read_timeout         120;
+        client_max_body_size 2048M;
+	proxy_request_buffering off;
+        proxy_pass http://127.0.0.1:7105;
+    }
+    location ^~ /v1/commit_chunked_upload{
+        rewrite /v1/(.*)   /$1 break;
+        proxy_redirect     off;
+        proxy_set_header   Host             $host;
+        proxy_set_header   X-Real-IP        $http_x_forwarded_for;
+        proxy_set_header   X-Forwarded-For  $proxy_add_x_forwarded_for;
+        proxy_set_header   X-Original-URI   $request_uri;
+
+        proxy_connect_timeout      120;
+        proxy_send_timeout         120;
+        proxy_read_timeout         120;
+        client_max_body_size 2048M;
+
+        proxy_pass http://127.0.0.1:7105;
+    }
+    location ^~ /v1/chunked_upload {
+        rewrite /v1/(.*)   /$1 break;
+        proxy_redirect     off;
+        proxy_set_header   Host             $host;
+        proxy_set_header   X-Real-IP        $http_x_forwarded_for;
+        proxy_set_header   X-Forwarded-For  $proxy_add_x_forwarded_for;
+        proxy_set_header   X-Original-URI   $request_uri;
+
+        proxy_connect_timeout      120;
+        proxy_send_timeout         120;
+        proxy_read_timeout         120;
+        client_max_body_size 2048M;
+
+        proxy_pass http://127.0.0.1:7105;
+    }
+
+    location ^~ /v1/wopi/ {
+        rewrite /v1/(.*)   /$1 break;
+        root /var/preview_files;
+        proxy_redirect     off;
+        proxy_set_header   Host             $host;
+        proxy_set_header   X-Real-IP        $http_x_forwarded_for;
+        proxy_set_header   X-Forwarded-For  $proxy_add_x_forwarded_for;
+        proxy_set_header   X-Original-URI   $request_uri;
+
+        proxy_connect_timeout      120;
+        proxy_send_timeout         120;
+        proxy_read_timeout         120;
+        client_max_body_size 2048M;
+
+        proxy_pass http://127.0.0.1:7105;
+    }
+#============================================================================
+
+    location ^~ /v2/preview/ {
+        rewrite /v2/(.*)   /$1 break;
+        root /var/preview_files;
+        proxy_redirect     off;
+        proxy_set_header   Host             $host;
+        proxy_set_header   X-Real-IP        $http_x_forwarded_for;
+        proxy_set_header   X-Forwarded-For  $proxy_add_x_forwarded_for;
+        proxy_set_header   X-Original-URI   $request_uri;
+
+        proxy_connect_timeout      120;
+        proxy_send_timeout         120;
+        proxy_read_timeout         120;
+        client_max_body_size 2048M;
+
+        proxy_pass http://127.0.0.1:7105;
+    }
+
+    location /preview_files {
+        internal;
+        alias /opt/var/preview_files;
+    }
+
+    location ^~ /v2/archives {
+        rewrite /v2/(.*)   /$1 break;
+        proxy_redirect     off;
+        proxy_set_header   Host             $host;
+        proxy_set_header   X-Real-IP        $http_x_forwarded_for;
+        proxy_set_header   X-Forwarded-For  $proxy_add_x_forwarded_for;
+        proxy_set_header   X-Original-URI   $request_uri;
+
+        proxy_connect_timeout      120;
+        proxy_send_timeout         120;
+        proxy_read_timeout         120;
+        client_max_body_size 2048M;
+
+        proxy_pass http://127.0.0.1:7205;
+    }
+
+    location ^~ /v2/delivery/archives {
+        rewrite /v2/(.*)   /$1 break;
+        proxy_redirect     off;
+        proxy_set_header   Host             $host;
+        proxy_set_header   X-Real-IP        $http_x_forwarded_for;
+        proxy_set_header   X-Forwarded-For  $proxy_add_x_forwarded_for;
+        proxy_set_header   X-Original-URI   $request_uri;
+
+        proxy_connect_timeout      120;
+        proxy_send_timeout         120;
+        proxy_read_timeout         120;
+        client_max_body_size 2048M;
+
+        proxy_pass http://127.0.0.1:7205;
+    }
+
+    location ^~ /v2/delivery/data {
+        rewrite /v2/(.*)   /$1 break;
+        proxy_redirect     off;
+        proxy_set_header   Host             $host;
+        proxy_set_header   X-Real-IP        $http_x_forwarded_for;
+        proxy_set_header   X-Forwarded-For  $proxy_add_x_forwarded_for;
+        proxy_set_header   X-Original-URI   $request_uri;
+
+        proxy_connect_timeout      120;
+        proxy_send_timeout         120;
+        proxy_read_timeout         120;
+        client_max_body_size 2048M;
+
+        proxy_pass http://127.0.0.1:7105;
+    }
+
+    location ~* /v2/ {
+        rewrite /v2/(.*)   /$1 break;
+        proxy_redirect     off;
+        proxy_set_header   Host             $host;
+        proxy_set_header   X-Real-IP        $http_x_forwarded_for;
+        proxy_set_header   X-Forwarded-For  $proxy_add_x_forwarded_for;
+        proxy_set_header   X-Original-URI   $request_uri;
+
+        proxy_connect_timeout      120;
+        proxy_send_timeout         120;
+        proxy_read_timeout         120;
+        client_max_body_size 2048M;
+
+        proxy_pass http://127.0.0.1:8080;
+
+    }
+
+#---------------------old outlook plugin interface--------------------------------
+    location ~* /v1/ {
+        rewrite /v1/(.*)   /$1 break;
+        proxy_redirect     off;
+        proxy_set_header   Host             $host;
+        proxy_set_header   X-Real-IP        $http_x_forwarded_for;
+        proxy_set_header   X-Forwarded-For  $proxy_add_x_forwarded_for;
+        proxy_set_header   X-Original-URI   $request_uri;
+
+        proxy_connect_timeout      120;
+        proxy_send_timeout         120;
+        proxy_read_timeout         120;
+        client_max_body_size 2048M;
+
+        proxy_pass http://127.0.0.1:8080;
+    }
+#================================================================================
+
+    location / {
+        index  index.html index.htm;
+        root /opt/webapps/pangu/www/;
+        #if ($request_filename ~ "\.(js|htc|ico|gif|jpg|png|css|ejs|html|htm|shtml)$") {
+        #    access_log off;
+        #    #expires 7d;
+        #}
+
+        try_files $uri @lua_router;
+	header_filter_by_lua    '
+            if ngx.var.arg_C ~= nil and ngx.var.arg_C ~= "" then
+                local promo_code = ngx.var.arg_C
+                ngx.header["Set-Cookie"] = {"promo_code="..promo_code.."; path=/", "setfrom=hitua; path=/"}
+            end
+        ';
+    }
+
+    location ~* ^/(js|css|resource)/ {
+        root /opt/webapps/pangu/www/;
+        expires 7d;
+    }
+
+    location ~ \.xml$ {
+        root /opt/webapps/pangu/www/;
+        expires 7d;
+        index crossdomain.xml;
+    }
+
+
+    location @lua_router {
+        content_by_lua_file "/opt/webapps/pangu/server/php/server_config/router.lua";
+    }
+
+#error_page  404              /404.html;
+    error_page   500 502 503 504  /50x.html;
+    location = /50x.html {
+        root   html;
+    }
+
+
+# pass the PHP scripts to FastCGI server listening on 127.0.0.1:9000
+#
+    location ~ \.php$ {
+	root /opt/webapps/pangu/www/;
+        fastcgi_pass   unix:/tmp/php.socket;
+        fastcgi_index  index.php;
+        include        fastcgi.conf;
+	header_filter_by_lua    '
+            if ngx.var.arg_C ~= nil and ngx.var.arg_C ~= "" then
+                local promo_code = ngx.var.arg_C
+                ngx.header["Set-Cookie"] = {"promo_code="..promo_code.."; path=/", "setfrom=hitua; path=/"}
+            end
+        ';
+    }
+
+
+
+##--------------------we use lua code to replace this location----------
+##--------this location only for refence--------------
+    location /_thumb/ {
+        rewrite /_thumb/(.*)   /thumb_/$1 break;
+
+        expires 7d;
+
+        proxy_connect_timeout 20;
+##limit the request method for cache,but it's non-userfull
+        proxy_cache_methods GET;
+        proxy_cache_use_stale updating;
+##if you set cookie_nocache,then will passed to end
+##proxy_no_cache $cookie_nocache;
+##send a header like My-Update-Header : on and you will update your cache
+#proxy_cache_bypass $http_my_update_header;
+        proxy_ignore_headers "X-Accel-Redirect" "X-Accel-Expires" "Expires" "Cache-Control" "Set-Cookie" ;
+        proxy_cache_valid  200 304 7d;
+#ensure file exists
+        proxy_ignore_client_abort   on;
+#proxy_cache_key $uri?width=$width&height=$height;
+        #proxy_cache_key $1$is_args$args;
+        proxy_cache_key hash:$is_args$args;
+#we do not need set this Host Header
+        proxy_set_header Host  $host;
+        proxy_set_header   X-Real-IP        $http_x_forwarded_for;
+        proxy_set_header   X-Forwarded-For  $proxy_add_x_forwarded_for;
+        #proxy_set_header X-Forwarded-For  $remote_addr;
+        add_header X-Image-Cache "ImageCache Status: $upstream_cache_status";
+        add_header Content-Type "image/jpeg";
+        proxy_pass http://127.0.0.1;
+#proxy_pass  http://127.0.0.1:7105;
+        proxy_cache cache_one;
+    }
+#--------------------------------------------------
+
+    location /thumb_/ {
+#internal;
+        rewrite /thumb_/(.*)   /$1 break;
+#set 执行阶段低于image_filter的配置阶段
+#所以以下代码无法得到正确结果,仅供参考
+#set_by_lua $width '
+#  local width = 640;
+#  if ngx.var.arg_W ~= nil then
+#     width = ngx.var.arg_W
+#  end
+#  return width;
+#';
+#set_by_lua $height '
+#  local height = 480;
+#  if ngx.var.arg_H ~= nil then
+#     height = ngx.var.arg_H
+#  end
+#  return height;
+#';
+#image_filter  resize  $width $height;
+
+        add_header X-Image-Resize "ImageResize Status: $upstream_cache_status";
+
+        image_filter_buffer 30M; 
+        image_filter  resize  $arg_WIDTH $arg_HEIGHT;
+
+        proxy_set_header Host  $host;
+        proxy_set_header   X-Real-IP        $http_x_forwarded_for;
+        proxy_set_header   X-Forwarded-For  $proxy_add_x_forwarded_for;
+        #proxy_set_header X-Forwarded-For  $remote_addr;
+
+        proxy_pass  http://127.0.0.1:7105;
+#proxy_ignore_headers "X-Accel-Redirect" "X-Accel-Expires" "Expires" "Cache-Control" "Set-Cookie" ;
+#proxy_cache_valid  200 304 7d;    ##this direct very useful
+#proxy_cache cache_one;
+#proxy_cache_key $uri?width=$arg_WIDTH&height=$arg_HEIGHT;
+    }
+
+    location /status {
+        content_by_lua_file '/opt/webapps/pangu/server/php/server_config/status.lua';
+    }
+    location /manager {
+        proxy_redirect     off;
+        proxy_set_header   Host         $host;
+        proxy_set_header   X-Real-IP        $http_x_forwarded_for;
+        proxy_set_header   X-Forwarded-For  $proxy_add_x_forwarded_for;
+        proxy_pass http://portal.lenovows.com:10085/manager;
+    }
+

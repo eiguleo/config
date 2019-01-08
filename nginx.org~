@@ -1,0 +1,9 @@
+    location ~ hello$ {
+        #proxy_pass   http://1.1.13.13:8000;
+        #proxy_set_header Connection close;
+        #proxy_set_header HOST "1.1.1.10" ;
+        proxy_set_header test paroxy_test;
+        #rewrite  "^/(.*)$"  http://1.1.13.13:8000/$1;
+        proxy_pass    http://1.1.13.13:8000;
+        proxy_set_header MyHeader "test";
+    }

@@ -1,0 +1,12 @@
+1, proxy_set_header and rewrite
+    location ~ hello$ {
+        #proxy_pass   http://1.1.13.13:8000;
+        #proxy_set_header Connection close;
+        #proxy_set_header HOST "1.1.1.10" ;
+        proxy_set_header test paroxy_test;
+	# rewrite returen 302 to the client
+        #rewrite  "^/(.*)$"  http://1.1.13.13:8000/$1;
+        # proxy_set_head only be effective in proxy_pass 
+        proxy_pass    http://1.1.13.13:8000;
+        proxy_set_header MyHeader "test";
+    }
