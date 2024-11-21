@@ -1,0 +1,5 @@
+;;;; -*- mode: lisp-data -*-
+(
+ (:id "sha1:6d4eb958390599243ba9f5035cb671fa8dd6a93a" :fingerprints ("sha1:ae:2c:f6:f4:52:fe:fe:c5:c5:2c:23:79:d8:ab:94:3a:01:d3:1c:f7" "sha1:83:18:09:08:81:95:00:e7:7d:84:8f:8d:fd:3a:be:7f:25:a4:8e:de") :host "elpa.gnu.org:443" :conditions (:same-cert))
+ (:id "sha1:1dd1af4a16d2ed2802679be2de23161d1f79b3c7" :fingerprints ("sha1:33:b7:71:bd:3d:0c:28:6f:c1:d8:af:0e:0e:8c:49:c2:5b:f0:eb:b4" "sha1:9c:77:25:d5:a9:ee:69:6b:dd:d1:80:af:b3:7b:6b:e2:73:aa:34:78") :host "elpa.nongnu.org:443" :conditions (:same-cert))
+)
